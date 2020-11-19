@@ -5,18 +5,37 @@ import random
 df = pd.read_csv('/content/drive/MyDrive/Datasets/Book-Crossing-Dataset/BX-Books.csv', sep=';', error_bad_lines=False, engine = 'python')
 df = df.drop(['Book-Title', 'Image-URL-S', 'Image-URL-M', 'Image-URL-L'], axis = 1)
 
-#randomly sample subset of users for quicker execution
+#randomly sample subset of items for quicker execution
 subset = 10000
 df = df.sample(n = subset)
+num_users = random.randint(100, 1000)
 
-#get eligible publishers as those who have more than 10 books published in the dataset
-eligible_publishers = [publisher for publisher in list(df.Publisher.unique()) if len(df[df['Publisher'] == publisher]) >= 10]
+def get_browsing_dataset(df, num_users):
+  #get eligible publishers as those who have more than 10 books published in the dataset
+  eligible_publishers = [publisher for publisher in list(df.Publisher.unique()) if len(df[df['Publisher'] == publisher]) >= 10]
 
-#get dataset consisting of only those rows with eligible publishers
-df = df.loc[df['Publisher'].isin(eligible_publishers)]
+  #get dataset consisting of only those rows with eligible publishers
+  df = df.loc[df['Publisher'].isin(eligible_publishers)]
+
+  #randomly set number of users
+  
+  #create first session to create new dataframe
+  df_new = create_session(df, random.randint(1, 20))
+  #create a session for each user 
+  for i in range(num_users-1):
+    #create random number of sessions for each user:
+    num_sessions = random.randint(1, 5)
+    for j in range(num_sessions-1):
+      df_new = df_new.append(create_session(df, random.randint(1, 20)))
+
+
+  df_new = df_new.sample(frac=1).reset_index(drop=True)
+
+  return df_new
+
 
 #create session
-def create_session(n):
+def create_session(df, n):
   #create subset
   df_sesh = df.sample(n)
   df_sesh = df_sesh.reset_index(drop = True)
@@ -43,16 +62,5 @@ def create_session(n):
 
   return df_sesh
 
-#randomly set number of users
-num_users = random.randint(10, 100)
-#create first session to create new dataframe
-df_new = create_session(random.randint(1, 20))
-#create a session for each user 
-for i in range(num_users-1):
-  #create random number of sessions for each user:
-  num_sessions = random.randint(1, 5)
-  for j in range(num_sessions-1):
-    df_new = df_new.append(create_session(random.randint(1, 20)))
 
-
-df_new = df_new.sample(frac=1).reset_index(drop=True)
+browsing_dataset = get_browsing_dataset(df, num_users)
