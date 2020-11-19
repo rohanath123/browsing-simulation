@@ -11,3 +11,8 @@ Recommendation System Training Dataset:
 User Browsing Session Dataset:
 
 ['ISBN', 'Book-Author', 'Year-Of-Publication', 'Publisher', 'Final_Item', 'Considered_Before', 'Considered_After', 'Time_to_Transaction', 'Time_Considered']
+
+
+**NOTE**:
+
+The dataset generated is completely random, which means that there are no semantic patterns or any sort of logic to the preferences of each user. This may cause problems in modelling preferences down the line. Use only for testing purposes. 
